@@ -75,6 +75,11 @@ const DeviceRow = ({ devices, index, style }) => {
 
   const item = devices[index];
   const position = useSelector((state) => state.session.positions[item.id]);
+  const visibleAlarms = position?.attributes?.alarm
+    ?.split(',')
+    .map((alarm) => alarm.trim())
+    .filter((alarm) => alarm && alarm !== 'tow')
+    .join(',');
 
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
   const deviceSecondary = useAttributePreference('deviceSecondary', '');
@@ -145,8 +150,8 @@ const DeviceRow = ({ devices, index, style }) => {
         />
         {position && (
           <>
-            {position.attributes.hasOwnProperty('alarm') && (
-              <Tooltip title={`${t('eventAlarm')}: ${formatAlarm(position.attributes.alarm, t)}`}>
+            {visibleAlarms && (
+              <Tooltip title={`${t('eventAlarm')}: ${formatAlarm(visibleAlarms, t)}`}>
                 <IconButton size="small">
                   <ErrorIcon fontSize="small" className={classes.error} />
                 </IconButton>
