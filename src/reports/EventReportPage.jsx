@@ -62,10 +62,12 @@ const EventReportPage = () => {
 
   const [allEventTypes, setAllEventTypes] = useState([{ id: 'allEvents', label: 'eventAll' }]);
 
-  const alarms = useTranslationKeys((it) => it.startsWith('alarm')).map((it) => ({
-    key: unprefixString('alarm', it),
-    name: t(it),
-  }));
+  const alarms = useTranslationKeys((it) => it.startsWith('alarm') && it !== 'alarmTow').map(
+    (it) => ({
+      key: unprefixString('alarm', it),
+      name: t(it),
+    }),
+  );
 
   const [columns, setColumns] = usePersistedState('eventColumns', [
     'eventTime',

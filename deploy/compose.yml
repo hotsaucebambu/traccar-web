@@ -44,6 +44,7 @@ services:
     ports:
       - "5027:5027/tcp"
       - "5027:5027/udp"
+      - "5030:5030/tcp"
     networks:
       - database
       - vpn

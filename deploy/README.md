@@ -4,8 +4,9 @@ This deployment runs the customized Traccar web build with Traccar Server and
 MySQL. It joins the existing `wg-easy_wg` Docker network so the shared Caddy
 instance can proxy `track.jtrack.co.uk` to `traccar:8082`.
 
-The Teltonika protocol is published publicly on port 5027 over TCP and UDP. No
-other device protocol ports are exposed.
+The Teltonika protocol is published publicly on port 5027 over TCP and UDP. The
+Mictrack MT700 protocol is published publicly on port 5030 over TCP. No other
+device protocol ports are exposed.
 
 The production frontend is built from the repository root with:
 

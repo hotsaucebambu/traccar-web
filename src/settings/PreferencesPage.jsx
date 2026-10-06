@@ -88,10 +88,12 @@ const PreferencesPage = () => {
     setToken(await response.text());
   });
 
-  const alarms = useTranslationKeys((it) => it.startsWith('alarm')).map((it) => ({
-    key: unprefixString('alarm', it),
-    name: t(it),
-  }));
+  const alarms = useTranslationKeys((it) => it.startsWith('alarm') && it !== 'alarmTow').map(
+    (it) => ({
+      key: unprefixString('alarm', it),
+      name: t(it),
+    }),
+  );
 
   const handleSave = useCatch(async () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {

@@ -27,10 +27,12 @@ const NotificationPage = () => {
 
   const [item, setItem] = useState();
 
-  const alarms = useTranslationKeys((it) => it.startsWith('alarm')).map((it) => ({
-    key: unprefixString('alarm', it),
-    name: t(it),
-  }));
+  const alarms = useTranslationKeys((it) => it.startsWith('alarm') && it !== 'alarmTow').map(
+    (it) => ({
+      key: unprefixString('alarm', it),
+      name: t(it),
+    }),
+  );
 
   const testNotificators = useCatch(async () => {
     await Promise.all(
