@@ -1,0 +1,64 @@
+services:
+  database:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: traccar
+      MYSQL_USER: traccar
+      MYSQL_PASSWORD: ${TRACCAR_DATABASE_PASSWORD}
+    volumes:
+      - traccar_database:/var/lib/mysql
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u traccar -p$$MYSQL_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  traccar:
+    image: traccar/traccar:6.16.0-alpine
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      CONFIG_USE_ENVIRONMENT_VARIABLES: "true"
+      DATABASE_DRIVER: com.mysql.cj.jdbc.Driver
+      DATABASE_URL: jdbc:mysql://database:3306/traccar?zeroDateTimeBehavior=round&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false&allowMultiQueries=true&autoReconnect=true&useUnicode=yes&characterEncoding=UTF-8&sessionVariables=sql_mode=''
+      DATABASE_USER: traccar
+      DATABASE_PASSWORD: ${TRACCAR_DATABASE_PASSWORD}
+      WEB_PATH: /opt/traccar/custom-web
+      WEB_URL: https://track.jtrack.co.uk
+      WEB_CONSOLE: "false"
+      WEB_SHOWSTACKTRACES: "false"
+      LOGGER_CONSOLE: "true"
+    volumes:
+      - ./web:/opt/traccar/custom-web:ro
+      - ./logs:/opt/traccar/logs
+      - ./data:/opt/traccar/data
+    networks:
+      - database
+      - vpn
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8082/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 2m
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  database:
+    internal: true
+  vpn:
+    external: true
+    name: wg-easy_wg
+
+volumes:
+  traccar_database:
