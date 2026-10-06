@@ -41,6 +41,9 @@ services:
       - ./web:/opt/traccar/custom-web:ro
       - ./logs:/opt/traccar/logs
       - ./data:/opt/traccar/data
+    ports:
+      - "5027:5027/tcp"
+      - "5027:5027/udp"
     networks:
       - database
       - vpn
